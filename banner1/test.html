@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>无缝轮播图</title>
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+		a{
+			text-decoration: none;
+		}
+		ul,li{
+			list-style: none;
+		}
+		.banner{
+			width:730px;
+			height:336px;
+			margin:60px auto;
+			position: relative;
+			overflow: hidden;
+		}
+		.img{
+			width:3650px;
+			height:336px;
+			position: absolute;
+			left:0;
+			top:0;
+		}
+		.img li{
+			width:730px;
+			height:336px;
+			float: left;
+		}
+		.dots{
+			position: absolute;
+			bottom:5px;
+			left:50%;
+			margin-left:-50px;
+		}
+		.dots li{
+			width:10px;
+			height:10px;
+			border-radius:50%;
+			background:#aaabab;
+			margin-right:20px;
+			float: left;
+			cursor: pointer;
+		}
+		.dots li:last-child{
+			margin-right:0px;
+		}
+		.dots li.on{
+			background:red;
+		}
+		.prev,.next{
+			position: absolute;
+			width:40px;
+			height:80px;	
+			top:50%;
+			margin-top:-40px;
+			display: block;
+			background:#ccc;
+		}
+		.prev{
+			left:0px;
+		}
+		.next{
+			right:0px;
+		}
+	</style>
+</head>
+<body>
+	<div class="banner">
+		<ul class="img">
+			<li><img src="images/1.jpg"></li>
+			<li><img src="images/2.jpg"></li>
+			<li><img src="images/3.jpg"></li>
+			<li><img src="images/4.jpg"></li>
+		</ul>
+		<ul class="dots">
+		</ul>
+		<a href="javascript:;" class="prev"></a>
+		<a href="javascript:;" class="next"></a>
+	</div>
+	<script src="js/jquery.js"></script>
+	<script>
+		$(function(){
+			var index=0;//初始计量变量
+			var clone=$(".img li").first().clone();//把第一张图片克隆一份，放到最后一张轮播图后面
+			$(".img").append(clone);
+			//循环插入小圆点
+			for(i=0;i<4;i++){
+				$(".dots").append("<li></li>");
+			}
+			//给第一个小圆点添加样式
+			$(".dots li").first().addClass("on");
+			//点击按钮向左轮播
+			$(".prev").click(function(){
+				index--;
+				if(index<0){
+					index=4;
+					$(".img").css("left",-index*730+"px");
+					index=index-1;
+				}
+				$(".img").stop().animate({
+					left:-index*730+"px"
+				});
+				$(".dots li").eq(index).addClass("on").siblings().removeClass("on");
+			});
+			//点击按钮向右轮播
+			$(".next").click(function(){
+				index++;
+				if(index>4){
+					index=0;	
+					$(".img").css("left",-index*730+"px");
+					index=1;
+				}
+				$(".img").stop().animate({
+					left:-index*730+"px"
+				});
+				if(index==4){
+				$(".dots li").eq(0).addClass("on").siblings().removeClass("on");	
+				}
+				$(".dots li").eq(index).addClass("on").siblings().removeClass("on");
+			}); 
+			//给小圆点设置点击事件
+			$(".dots li").click(function(){
+				index=$(this).index();
+				$(".img").stop().animate({
+					left:-index*730+"px"
+				});
+				$(".dots li").eq(index).addClass("on").siblings().removeClass("on");
+			});
+			/*自动轮播*/
+			var t=setInterval(function(){
+				//触发右点击事件
+				$(".next").click();
+			},2000);
+			
+			$(".banner").hover(function(){
+				clearInterval(t);//鼠标悬停时清除定时器
+			},function(){
+				t=setInterval(function(){//鼠标离开时开启定时器
+					$(".next").click();
+				},2000);
+			});
+
+		});
+	</script>
+</body>
+</html>
